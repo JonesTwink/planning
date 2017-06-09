@@ -7,6 +7,7 @@ $(document).ready(function () {
     $('body').on('click', '.project-card', function (event) {
         event.stopPropagation();
         toggleElement('.project-grid','hide', 'left');
+        $('.add-project-button').hide();
         fillProjectContent($(this));
         $('.project-wrapper').fadeIn(700);
     });
@@ -15,6 +16,7 @@ $(document).ready(function () {
         $('.project-wrapper').fadeOut(200);
         $('.project-wrapper').find('.task-list').html('');
         toggleElement('.project-grid','show','left');
+        $('.add-project-button').show();
 
     });
 
@@ -35,6 +37,15 @@ $(document).ready(function () {
         $('#add-task-bg').css('display', 'flex');
     });
 
+    $('.project-wrapper').on('click', '.add-subtask-button', function () {
+        $('#add-subtask-bg').css('display', 'flex');
+        setParentTaskIdForSubtask($(this));
+    });
+    $('.add-project-button').on('click',function () {
+        $('#add-project-bg').css('display', 'flex');
+    });
+
+
     $('.modal-bg').on('click', function () {
         $(this).css('display', 'none');
     });
@@ -47,7 +58,11 @@ $(document).ready(function () {
 
 });
 
-
+function setParentTaskIdForSubtask($this) {
+    var parentTaskId = $this.parents('.task-info').find('#id').val();
+    $('#add-subtask-modal').find('#parent-task-id').val(parentTaskId);
+    console.log(  $('#add-subtask-modal').find('#parent-task-id').val());
+}
 function fillProjectContent($projectCard) {
     $this = $('.project-wrapper');
     var project = findEntityById($projectCard.find('#id').val(), data);
@@ -64,7 +79,7 @@ function buildTaskList(project){
             taskTpl.find('.task-title').html(task.title);
             taskTpl.find('.task-createdAt').children('.value').html(task.createdAt);
             taskTpl.find('.task-deadline').children('.value').html(task.deadline);
-
+            taskTpl.find('#id').val(task.id);
             var subtaskList = buildSubtaskList(task.subtasks, $(taskTpl).find('.subtask-list'));
             taskTpl.find('.subtask-list').html(subtaskList.html());
 
@@ -165,14 +180,14 @@ function getData(){
     data = [
                 {
                     id: '1',
-                    title: 'Проект 1',
+                    title: 'Строим Треугольник',
                     tasks: [
                                             {
                                                 id: '1',
                                                 title: 'Освещение 1',
                                                 createdAt:'01.01.2017',
                                                 deadline:'01.02.2020',
-                                                status: 'complete',
+                                                status: 'overdue',
                                                 subtasks:[
                                                             {
                                                                 title: 'Согласовать с архитектором',
@@ -183,10 +198,10 @@ function getData(){
                                                             },
                                                             {
                                                                 title: 'Согласовать с архитектором 2',
-                                                                status: 'pending',
+                                                                status: 'overdue',
                                                                 comment: 'Some text',
                                                                 createdAt:'01.01.2017',
-                                                                deadline: '03.02.2019'
+                                                                deadline: '01.02.2017'
                                                             }
                                                 ]
                                             },
@@ -196,7 +211,7 @@ function getData(){
                                                 title: 'Освещение 1.2',
                                                 createdAt:'01.01.2017',
                                                 deadline:'01.02.2020',
-                                                status: 'overdue',
+                                                status: 'pending',
                                                 subtasks:[
                                                     {
                                                         id: '1',
@@ -209,7 +224,7 @@ function getData(){
                                                     {
                                                         id: '2',
                                                         title: 'Согласовать с архитектором 2',
-                                                        status: 'pending',
+                                                        status: 'complete',
                                                         comment: 'Some text',
                                                         createdAt:'01.01.2017',
                                                         deadline: '03.02.2019'
@@ -221,7 +236,7 @@ function getData(){
 
                 {
                     id: '2',
-                    title: 'Проект 2',
+                    title: 'Строим Могилёв',
                     tasks: [
                         {
                             id: '1',
