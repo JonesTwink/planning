@@ -1,0 +1,247 @@
+@font-face {
+    font-family: 'Renault';
+    src: url('../fonts/RenaultLifeCyWebWeb-Regular.eot'); /* IE9 Compat Modes */
+    src: url('../fonts/RenaultLifeCyWebWeb-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../fonts/RenaultLifeCyWebWeb-Regular.woff') format('woff'),
+    url('../fonts/RenaultLifeCyWebWeb-Regular.ttf')  format('truetype');
+}
+@font-face {
+    font-family: 'Renault Bold';
+    src: url('../fonts/RenaultLifeCyWebWeb-Bold.eot'); /* IE9 Compat Modes */
+    src: url('../fonts/RenaultLifeCyWebWeb-Bold.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../fonts/RenaultLifeCyWebWeb-Bold.woff') format('woff');
+}
+
+
+.progress-bar .bar{
+    background: #FC0;
+}
+.page-wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vw;
+    padding: 20px;
+
+}
+.project-grid-wrapper{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+}
+.project-grid{
+    padding: 5px;
+    width: auto;
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+
+
+}
+
+.project-card{
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    flex-grow: 1;
+    min-width: 300px;
+    height: 200px;
+    margin: 5px;
+    color: grey;
+    box-shadow: 0 1px 3px 0px grey;
+    background: #ececec;
+    font-family: 'Renault';
+}
+
+.project-card p{
+    width: 100%;
+    padding: 0 10px;
+    margin-bottom: 0;
+}
+.project-card p .label{
+    margin-left: 5px;
+}
+.project-card .project-title{
+    font-family: 'Renault Bold';
+    width: 100%;
+    background: #FC0;
+    text-align: center;
+    font-size: 1.5em;
+    color: white;
+    text-shadow: 0px 0px 2px #757373;
+    border-bottom: 1px solid #b3b1a6;
+    margin: 0px;
+    padding: 10px 0;
+    word-break: break-word;
+}
+
+.project-wrapper{
+
+    display: none;
+    width: 100%;
+    height: 100vh;
+}
+.project-wrapper #project-title{
+    margin: 0;
+    font-size: 2em;
+    text-align: center;
+    font-family: 'Renault Bold';
+    word-break: break-word;
+    display: flex;
+    flex-grow: 1;
+}
+.project-wrapper .project-header{
+    display: flex;
+    align-items: center;
+}
+
+.project-wrapper .back-button{
+    margin: 0px 20px;
+    font-family: 'Renault Bold';
+    font-size: 1.2em;
+    background: #ececec;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s all ease;
+}
+.project-wrapper .back-button:hover{
+    background: grey;
+    color: white;
+
+}
+.task-list{
+    width: 100%;
+}
+.task-item{
+    display: flex;
+    height: 300px;
+    margin: 10px;
+}
+.task-body{
+    background: #ececec;
+    width: 20%;
+    display: flex;
+    align-items: stretch;
+
+}
+.task-body .task-info{
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    padding: 5px;
+}
+.task-body .task-info p{
+    margin: 0px;
+    font-family: 'Renault';
+}
+.task-body .task-info p .label{
+    margin-left: 10px;
+    color: grey;
+}
+.task-body .task-info .task-title{
+    width: 100%;
+    font-size: 1.2em;
+    text-align: center;
+    font-family: 'Renault Bold';
+    word-break: break-word;
+    margin: 0;
+}
+.task-body .task-info .task-status{
+    width: 100%;
+    color: black;
+    text-align: center;
+
+
+}
+.task-body .subtask-list-button{
+    min-width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #E7E7E7;
+    transition: 0.5s background ease;
+    cursor: pointer;
+}
+.task-body .subtask-list-button:hover{
+    background: #dadada;
+}
+.task-item.active .subtask-list-button{
+    z-index: 2;
+    box-shadow: 5px 0px 8px -5px rgba(0,0,0,0.6);
+}
+.task-item .subtask-list{
+     width:0;
+ }
+.task-item.active .subtask-list{
+    width: 80%;
+}
+.subtask-list{
+    background: #EFEFEF;
+    width: 80%;
+    transition: 0.3s width ease;
+    display: flex;
+    justify-content: flex-start;
+    align-items: stretch;
+    overflow-x: scroll;
+}
+.subtask-item{
+    min-width: 300px;
+    background: #f4f4f4;
+    margin: 27px 13.5px 10px 13.5px;
+    box-shadow: 0 1px 3px 0px grey;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.subtask-item .subtask-info{
+
+}
+.subtask-item:first-child{
+    margin-left: 27px;
+}
+.subtask-item:last-child{
+    margin-right: 0px;
+}
+.overflow-fix{
+
+    min-width: 13.5px;
+    height: 1px;
+}
+
+.subtask-item .subtask-title{
+    width: 100%;
+    text-align: center;
+    font-family: 'Renault Bold';
+    margin-bottom: 0;
+}
+.subtask-item p{
+    font-family: 'Renault';
+    color: grey;
+    margin: 0;
+}
+.subtask-item p .value{
+    color: black;
+}
+.subtask-item p .label{
+    margin-left: 10px;
+}
+.subtask-item .subtask-status{
+    text-align: center;
+    width: 100%;
+}
+
+.subtask-buttons{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.subtask-buttons .subtask-button{
+    color: grey;
+    text-align: center;
+    padding: 5px 0px;
+}
