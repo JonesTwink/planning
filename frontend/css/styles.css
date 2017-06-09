@@ -16,6 +16,21 @@
 .progress-bar .bar{
     background: #FC0;
 }
+.button-flat{
+    border-radius: 2px;
+    color: grey;
+    text-align: center;
+    font-family: 'Renault';
+    padding: 5px 0px;
+    cursor: pointer;
+    background: #E7E7E7;
+    transition: 0.1s background linear;
+    margin: 10px;
+
+}
+.button-flat:hover{
+    background: #dadada;
+}
 .page-wrapper{
     display: flex;
     flex-direction: column;
@@ -133,6 +148,7 @@
     display: flex;
     flex-grow: 1;
     flex-direction: column;
+    justify-content: space-between;
     padding: 5px;
 }
 .task-body .task-info p{
@@ -244,4 +260,22 @@
     color: grey;
     text-align: center;
     padding: 5px 0px;
+    transition: 0.3s background ease;
+    display: flex;
+    flex-grow: 1;
+    cursor: pointer;
+}
+.subtask-buttons .subtask-button:hover{
+    color: white;
+    background: #dadada;
+}
+.subtask-buttons .subtask-button.check:hover{
+    background: #8dd382;
+}
+.subtask-buttons .subtask-button.uncheck:hover{
+    background: indianred;
+}
+.subtask-buttons .subtask-button span{
+    width: 100%;
+    text-align: center;
 }
