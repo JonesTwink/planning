@@ -114,7 +114,7 @@
     align-items: center;
 }
 
-.project-wrapper .back-button{
+.project-wrapper .top-button{
     margin: 0px 20px;
     font-family: 'Renault Bold';
     font-size: 1.2em;
@@ -124,7 +124,7 @@
     cursor: pointer;
     transition: 0.3s all ease;
 }
-.project-wrapper .back-button:hover{
+.project-wrapper .top-button:hover{
     background: grey;
     color: white;
 
@@ -278,4 +278,85 @@
 .subtask-buttons .subtask-button span{
     width: 100%;
     text-align: center;
+}
+
+.modal-bg{
+    display: none;
+    position: fixed;
+    z-index: 3;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.8);
+
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-form{
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content:  center;
+    background: #f4f4f4;
+    width: 500px;
+    height: auto;
+    font-family: 'Renault';
+}
+.form-title{
+    font-family: 'Renault Bold';
+    width: 100%;
+    text-align: center;
+}
+.form-group{
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+}
+
+.input-field {
+    display: block;
+
+    padding: 0.3rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.25;
+    color: #464a4c;
+    background-color: white;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.1rem;
+    -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+.input-field:focus{
+     border: 1px solid lightblue;
+     outline: none;
+ }
+.input-field:hover{
+     border: 1px solid lightblue;
+     outline: none;
+ }
+.form-buttons{
+    display: flex;
+    justify-content: flex-end;
+}
+.form-button{
+    border-radius: 2px;
+    color: grey;
+    text-align: center;
+    font-family: 'Renault';
+    padding: 5px 15px;
+    cursor: pointer;
+    background: #E7E7E7;
+    transition: 0.1s background linear;
+    margin: 10px;
+}
+.form-button.apply:hover{
+    color: white;
+    background: #82b782;
+}
+.form-button.cancel:hover{
+    background: #dadada;
 }

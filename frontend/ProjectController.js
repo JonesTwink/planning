@@ -30,6 +30,21 @@ $(document).ready(function () {
         }
 
     });
+
+    $('.new-task-button').on('click', function () {
+        $('#add-task-bg').css('display', 'flex');
+    });
+
+    $('.modal-bg').on('click', function () {
+        $(this).css('display', 'none');
+    });
+    $('.form-button.cancel').on('click', function () {
+        $(this).parents('.modal-bg').css('display', 'none');
+    });
+    $('.modal-form').on('click', function (event) {
+       event.stopPropagation();
+    });
+
 });
 
 
