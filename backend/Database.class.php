@@ -56,11 +56,27 @@ class Database
             return $this->formatStatementExecutionResult(false, $e->getMessage());
         }
     }
+
     function deleteProject($projectId){
         try{
             $statement = $this->connection->prepare("DELETE FROM `project` WHERE `id` = :projectId");
 
             $statement->bindParam(':projectId', $projectId);
+
+            return $this->formatStatementExecutionResult($statement->execute(), $this->connection->errorInfo()[2]);
+        }
+        catch(Exception $e){
+            return $this->formatStatementExecutionResult(false, $e->getMessage());
+        }
+    }
+
+    function addTask($taskName, $taskDeadline, $parentId){
+        try{
+            $statement = $this->connection->prepare("INSERT INTO `task` (`title`, `deadline`, `parentId`) VALUES (:projectName, :projectDeadline, :parentId)");
+
+            $statement->bindParam(':projectName', $taskName);
+            $statement->bindParam(':projectDeadline', $taskDeadline);
+            $statement->bindParam(':parentId', $parentId);
 
             return $this->formatStatementExecutionResult($statement->execute(), $this->connection->errorInfo()[2]);
         }

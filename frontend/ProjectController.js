@@ -1,7 +1,7 @@
 var globalProjectData;
 
 $(document).ready(function () {
-    getProjectsDataAndInitGrid();
+    getProjectsDataAndUpdateLayout('project');
 
     $('body').on('click', '.project-card', function (event) {
         event.stopPropagation();
@@ -41,6 +41,7 @@ $(document).ready(function () {
 
     $('.new-task-button').on('click', function () {
         $('#add-task-bg').css('display', 'flex');
+        setParentProjectIdForTask();
     });
 
     $('.project-wrapper').on('click', '.add-subtask-button', function () {
@@ -72,7 +73,7 @@ $(document).ready(function () {
                 console.log(appliedData);
                 if(data.status === 'success'){
                     closeForm('#add-project-bg');
-                    getProjectsDataAndInitGrid();
+                    getProjectsDataAndUpdateLayout('project');
                 } else{
                     alert(data.data);
                 }
@@ -91,13 +92,33 @@ $(document).ready(function () {
                 success: function (data) {
                     console.log(appliedData);
                     if(data.status === 'success'){
-                        getProjectsDataAndInitGrid();
+                        getProjectsDataAndUpdateLayout('project');
                     } else{
                         alert(data.data);
                     }
                 }
             });
         }
+    });
+
+    $('#add-task-modal .form-button.apply').on('click', function () {
+        var appliedData = getTaskFormFields();
+        console.log(appliedData);
+        $.ajax({
+            type: "POST",
+            url: 'backend/methods/addTask.php',
+            data: appliedData,
+            success: function (data) {
+                console.log(appliedData);
+                if(data.status === 'success'){
+                    closeForm('#add-task-bg');
+                    var currentProjectId = $('.project-wrapper').find('#id').val();
+                    getProjectsDataAndUpdateLayout('task', currentProjectId);
+                } else{
+                    alert(data.data);
+                }
+            }
+        });
     });
 
 });
@@ -110,6 +131,15 @@ function getProjectFormFields() {
     }
 }
 
+function getTaskFormFields() {
+    $form = $('#add-task-modal');
+    return {
+        taskName:   $form.find('#task-name').val(),
+        taskDeadline: $form.find('#task-deadline').val(),
+        parentId: $form.find('#parent-project-id').val()
+    }
+}
+
 function closeForm(selector) {
     $(selector).find('.input-field').val('');
     $(selector).hide();
@@ -118,20 +148,25 @@ function closeForm(selector) {
 function setParentTaskIdForSubtask($this) {
     var parentTaskId = $this.parents('.task-info').find('#id').val();
     $('#add-subtask-modal').find('#parent-task-id').val(parentTaskId);
-    console.log(  $('#add-subtask-modal').find('#parent-task-id').val());
 }
+
+function setParentProjectIdForTask() {
+    var parentProjectId = $('.project-wrapper').find('#id').val();
+    $('#add-task-modal').find('#parent-project-id').val(parentProjectId);
+}
+
 function fillProjectContent($projectCard, data) {
     $this = $('.project-wrapper');
     var project = findEntityById($projectCard.find('#id').val(), data);
-    console.log($projectCard.find('#id').val());
-    console.log(data);
     $this.find('#project-title').text(project.title);
+    $this.find('#id').val(project.id);
     buildTaskList(project);
 
 }
 function buildTaskList(project){
     $('<div class="task-item"></div>').load('templates/task-item.html', function () {
         var tpl = $(this);
+        $('.project-wrapper').find('.task-list').html('');
         $.each(project.tasks, function (index, task) {
             var taskTpl = tpl.clone();
             taskTpl.find('.task-status').html(resolveStatusString(task.status));
@@ -154,6 +189,7 @@ function buildSubtaskList(subtasks, $subtaskList) {
         var tpl = $(this);
         $.each(subtasks, function (index, subtask) {
             var subtaskTpl = tpl.clone();
+            subtaskTpl.find('#id').val(subtask.id);
             subtaskTpl.find('.subtask-status').html(resolveStatusString(subtask.status));
             subtaskTpl.find('.subtask-title').html(subtask.title);
             subtaskTpl.find('.subtask-createdAt').children('.value').html(formatDate(subtask.createdAt));
@@ -239,11 +275,21 @@ function resolveStatusString(status) {
     return response;
 }
 
-function getProjectsDataAndInitGrid() {
+function getProjectsDataAndUpdateLayout(elementType, parentId) {
     $.get('backend/methods/getAllProjectsData.php', function (data) {
         if (data.status === 'success'){
             globalProjectData = data.data;
-            buildGrid(data.data);
+            switch (elementType){
+                case 'project':
+                    buildGrid(data.data);
+                    break;
+                case 'task':
+                    buildTaskList(findEntityById(parentId, data.data));
+                    break;
+                case 'subtask':
+                    //to be implemented
+                    break;
+            }
         }
         else{
             alert(data.data);
