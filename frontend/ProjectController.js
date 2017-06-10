@@ -79,6 +79,26 @@ $(document).ready(function () {
             }
         });
     });
+    $('body').on('click','.delete-project-button', function (event) {
+        event.stopPropagation();
+        var deletionAccepted = confirm('Вы действительно хотите удалить проект?');
+        if (deletionAccepted){
+            var appliedData = { projectId: $(this).parents('.project-card').find('#id').val()};
+            $.ajax({
+                type: "POST",
+                url: 'backend/methods/deleteProject.php',
+                data: appliedData,
+                success: function (data) {
+                    console.log(appliedData);
+                    if(data.status === 'success'){
+                        getProjectsDataAndInitGrid();
+                    } else{
+                        alert(data.data);
+                    }
+                }
+            });
+        }
+    });
 
 });
 
