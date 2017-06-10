@@ -8,14 +8,21 @@ $(document).ready(function () {
         toggleElement('.project-grid','hide', 'left');
         $('.add-project-button').hide();
         fillProjectContent($(this), globalProjectData);
-        $('.project-wrapper').fadeIn(700);
+        $('.project-wrapper').show();
+        setTimeout(function () {
+            $('.project-wrapper').css('margin-left', '0');
+        }, 300);
     });
 
     $('.back-button').on('click', function () {
-        $('.project-wrapper').fadeOut(200);
-        $('.project-wrapper').find('.task-list').html('');
-        toggleElement('.project-grid','show','left');
-        $('.add-project-button').show();
+        $('.project-wrapper').css('margin-left', '-100vw');
+        setTimeout(function(){
+            $('.project-wrapper').hide();
+            $('.project-wrapper').find('.task-list').html('');
+            toggleElement('.project-grid','show','left');
+            $('.add-project-button').show();
+        }, 300);
+
 
     });
 
