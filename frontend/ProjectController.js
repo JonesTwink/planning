@@ -172,6 +172,9 @@ function resolveStatusString(status) {
         case 'complete':
             response = '<span style="color: green">Выполнено</span>';
             break;
+        case 'complete(overdue)':
+            response = '<span style="color: indianred">Выполнено(просрочено)</span>';
+            break;
     }
     return response;
 }
