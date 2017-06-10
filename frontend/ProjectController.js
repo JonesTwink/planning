@@ -62,7 +62,38 @@ $(document).ready(function () {
        event.stopPropagation();
     });
 
+    $('#add-project-modal .form-button.apply').on('click', function () {
+        var appliedData = getProjectFormFields();
+        $.ajax({
+            type: "POST",
+            url: 'backend/methods/addProject.php',
+            data: appliedData,
+            success: function (data) {
+                console.log(appliedData);
+                if(data.status === 'success'){
+                    closeForm('#add-project-bg');
+                    getProjectsDataAndInitGrid();
+                } else{
+                    alert(data.data);
+                }
+            }
+        });
+    });
+
 });
+
+function getProjectFormFields() {
+    $form = $('#add-project-modal');
+    return {
+        projectName:   $form.find('#project-name').val(),
+        projectDeadline: $form.find('#project-deadline').val()
+    }
+}
+
+function closeForm(selector) {
+    $(selector).find('.input-field').val('');
+    $(selector).hide();
+}
 
 function setParentTaskIdForSubtask($this) {
     var parentTaskId = $this.parents('.task-info').find('#id').val();
@@ -72,6 +103,8 @@ function setParentTaskIdForSubtask($this) {
 function fillProjectContent($projectCard, data) {
     $this = $('.project-wrapper');
     var project = findEntityById($projectCard.find('#id').val(), data);
+    console.log($projectCard.find('#id').val());
+    console.log(data);
     $this.find('#project-title').text(project.title);
     buildTaskList(project);
 
@@ -113,7 +146,7 @@ function buildSubtaskList(subtasks, $subtaskList) {
 function findEntityById(id, array) {
     var selectedEntity;
     $.each(array, function (index, entity) {
-        if (entity.id === id){
+        if (entity.id == id){
             selectedEntity = entity;
             return;
         }
@@ -136,6 +169,7 @@ function toggleElement(selector, action, fromDirection) {
 }
 
 function buildGrid(data){
+    $('body').find('.project-grid').children('.project-card').remove();
     $('<div class="project-card"></div>').load('templates/project-card.html', function () {
         var tpl = $(this);
         $.each(data, function(index, project){

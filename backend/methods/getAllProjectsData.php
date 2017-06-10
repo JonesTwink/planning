@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require_once '../Database.class.php';
+require_once '../Utils.class.php';
 
 $database = new Database();
 
@@ -8,16 +9,13 @@ $projects = $database->getProjects();
 
 if ($projects){
     $structuredProjectsData = fillProjectsWithData($projects, $database);
-    sendResponseAndFinish('success', $structuredProjectsData);
+    Utils::sendResponseAndFinish('success', $structuredProjectsData);
 }
 else{
-    sendResponseAndFinish('error', 'Received exception from the database.');
+    Utils::sendResponseAndFinish('error', 'Received exception from the database.');
 }
 
-function sendResponseAndFinish($status, $data){
-    echo json_encode(['status' => $status, 'data' => $data], JSON_UNESCAPED_UNICODE, JSON_PRETTY_PRINT);
-    exit;
-}
+
 
 function fillProjectsWithData($projects, $database){
     $data = array();

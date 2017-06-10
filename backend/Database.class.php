@@ -11,6 +11,9 @@ class Database
     private function establishConnection(){
         $secret = require_once 'secret.php';
         $connection = new PDO("mysql:dbname=$secret->name;host=127.0.0.1;charset=UTF8", $secret->username, $secret->pass);
+        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
         return $connection;
     }
 
@@ -38,5 +41,26 @@ class Database
             return $statement->fetchAll(PDO::FETCH_ASSOC);
         else
             return false;
+    }
+
+    function addProject($projectName, $projectDeadline){
+        try{
+            $statement = $this->connection->prepare("INSERT INTO `project` (`title`, `deadline`) VALUES (:projectName, :projectDeadline)");
+
+            $statement->bindParam(':projectName', $projectName);
+            $statement->bindParam(':projectDeadline', $projectDeadline);
+
+            return $this->formatStatementExecutionResult($statement->execute(), $this->connection->errorInfo()[2]);
+        }
+        catch(Exception $e){
+            return $this->formatStatementExecutionResult(false, $e->getMessage());
+        }
+    }
+
+    function formatStatementExecutionResult($result, $error = 'No error message provided.'){
+        if ($result)
+            return (object)['executionResult'=> true];
+        else
+            return (object)['executionResult'=> false, 'info' => $error];
     }
 }
