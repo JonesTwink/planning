@@ -85,6 +85,19 @@ class Database
         }
     }
 
+    function deleteTask($taskId){
+        try{
+            $statement = $this->connection->prepare("DELETE FROM `task` WHERE `id` = :taskId");
+
+            $statement->bindParam(':taskId', $taskId);
+
+            return $this->formatStatementExecutionResult($statement->execute(), $this->connection->errorInfo()[2]);
+        }
+        catch(Exception $e){
+            return $this->formatStatementExecutionResult(false, $e->getMessage());
+        }
+    }
+
     function formatStatementExecutionResult($result, $error = 'No error message provided.'){
         if ($result)
             return (object)['executionResult'=> true];

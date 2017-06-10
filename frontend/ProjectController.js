@@ -15,6 +15,7 @@ $(document).ready(function () {
     });
 
     $('.back-button').on('click', function () {
+        getProjectsDataAndUpdateLayout('project');
         $('.project-wrapper').css('margin-left', '-100vw');
         setTimeout(function(){
             $('.project-wrapper').hide();
@@ -123,6 +124,27 @@ $(document).ready(function () {
         });
     });
 
+    $('body').on('click','.delete-task-button', function (event) {
+        event.stopPropagation();
+        var deletionAccepted = confirm('Вы действительно хотите удалить задание?');
+        if (deletionAccepted){
+            var appliedData = { taskId: $(this).parents('.task-item').find('#id').val()};
+            $.ajax({
+                type: "POST",
+                url: 'backend/methods/deleteTask.php',
+                data: appliedData,
+                success: function (data) {
+                    console.log(appliedData);
+                    if(data.status === 'success'){
+                        var currentProjectId = $('.project-wrapper').find('#id').val();
+                        getProjectsDataAndUpdateLayout('task', currentProjectId);
+                    } else{
+                        alert(data.data);
+                    }
+                }
+            });
+        }
+    });
 });
 
 function getProjectFormFields() {
