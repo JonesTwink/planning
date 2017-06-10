@@ -1,14 +1,13 @@
-var data;
+var globalProjectData;
 
 $(document).ready(function () {
-    getData();
-    buildGrid();
+    getProjectsDataAndInitGrid();
 
     $('body').on('click', '.project-card', function (event) {
         event.stopPropagation();
         toggleElement('.project-grid','hide', 'left');
         $('.add-project-button').hide();
-        fillProjectContent($(this));
+        fillProjectContent($(this), globalProjectData);
         $('.project-wrapper').fadeIn(700);
     });
 
@@ -63,7 +62,7 @@ function setParentTaskIdForSubtask($this) {
     $('#add-subtask-modal').find('#parent-task-id').val(parentTaskId);
     console.log(  $('#add-subtask-modal').find('#parent-task-id').val());
 }
-function fillProjectContent($projectCard) {
+function fillProjectContent($projectCard, data) {
     $this = $('.project-wrapper');
     var project = findEntityById($projectCard.find('#id').val(), data);
     $this.find('#project-title').text(project.title);
@@ -77,8 +76,8 @@ function buildTaskList(project){
             var taskTpl = tpl.clone();
             taskTpl.find('.task-status').html(resolveStatusString(task.status));
             taskTpl.find('.task-title').html(task.title);
-            taskTpl.find('.task-createdAt').children('.value').html(task.createdAt);
-            taskTpl.find('.task-deadline').children('.value').html(task.deadline);
+            taskTpl.find('.task-createdAt').children('.value').html(formatDate(task.createdAt));
+            taskTpl.find('.task-deadline').children('.value').html(formatDate(task.deadline));
             taskTpl.find('#id').val(task.id);
             var subtaskList = buildSubtaskList(task.subtasks, $(taskTpl).find('.subtask-list'));
             taskTpl.find('.subtask-list').html(subtaskList.html());
@@ -97,8 +96,8 @@ function buildSubtaskList(subtasks, $subtaskList) {
             var subtaskTpl = tpl.clone();
             subtaskTpl.find('.subtask-status').html(resolveStatusString(subtask.status));
             subtaskTpl.find('.subtask-title').html(subtask.title);
-            subtaskTpl.find('.subtask-createdAt').children('.value').html(subtask.createdAt);
-            subtaskTpl.find('.subtask-deadline').children('.value').html(subtask.deadline);
+            subtaskTpl.find('.subtask-createdAt').children('.value').html(formatDate(subtask.createdAt));
+            subtaskTpl.find('.subtask-deadline').children('.value').html(formatDate(subtask.deadline));
             $subtaskList.prepend(subtaskTpl);
         });
     });
@@ -129,7 +128,7 @@ function toggleElement(selector, action, fromDirection) {
     }
 }
 
-function buildGrid(){
+function buildGrid(data){
     $('<div class="project-card"></div>').load('templates/project-card.html', function () {
         var tpl = $(this);
         $.each(data, function(index, project){
@@ -179,120 +178,27 @@ function resolveStatusString(status) {
     return response;
 }
 
-function getData(){
-    data = [
-                {
-                    id: '1',
-                    title: 'Строим Треугольник',
-                    tasks: [
-                                            {
-                                                id: '1',
-                                                title: 'Освещение 1',
-                                                createdAt:'01.01.2017',
-                                                deadline:'01.02.2020',
-                                                status: 'overdue',
-                                                subtasks:[
-                                                            {
-                                                                title: 'Согласовать с архитектором',
-                                                                status: 'pending',
-                                                                comment: 'Some text',
-                                                                createdAt:'01.01.2017',
-                                                                deadline: '01.01.2019'
-                                                            },
-                                                            {
-                                                                title: 'Согласовать с архитектором 2',
-                                                                status: 'overdue',
-                                                                comment: 'Some text',
-                                                                createdAt:'01.01.2017',
-                                                                deadline: '01.02.2017'
-                                                            }
-                                                ]
-                                            },
+function getProjectsDataAndInitGrid() {
+    $.get('backend/methods/getAllProjectsData.php', function (data) {
+        if (data.status === 'success'){
+            globalProjectData = data.data;
+            buildGrid(data.data);
+        }
+        else{
+            alert(data.data);
+        }
+    })
+}
 
-                                            {
-                                                id: '2',
-                                                title: 'Освещение 1.2',
-                                                createdAt:'01.01.2017',
-                                                deadline:'01.02.2020',
-                                                status: 'pending',
-                                                subtasks:[
-                                                    {
-                                                        id: '1',
-                                                        title: 'Согласовать с архитектором',
-                                                        status: 'pending',
-                                                        comment: 'Some text',
-                                                        createdAt:'01.01.2017',
-                                                        deadline: '01.01.2019'
-                                                    },
-                                                    {
-                                                        id: '2',
-                                                        title: 'Согласовать с архитектором 2',
-                                                        status: 'complete',
-                                                        comment: 'Some text',
-                                                        createdAt:'01.01.2017',
-                                                        deadline: '03.02.2019'
-                                                    }
-                                                ]
-                                            },
-                            ]
-                },
+function formatDate(dateString) {
+    var date  = new Date(dateString);
 
-                {
-                    id: '2',
-                    title: 'Строим Могилёв',
-                    tasks: [
-                        {
-                            id: '1',
-                            title: 'Освещение Освещение Освещение Освещение 2',
-                            createdAt:'01.01.2017',
-                            deadline:'01.02.2020',
-                            status: 'complete',
-                            subtasks:[
-                                {
-                                    id: '1',
-                                    title: 'Согласовать с архитектором',
-                                    status: 'pending',
-                                    comment: 'Some text',
-                                    createdAt:'01.01.2017',
-                                    deadline: '01.01.2019'
-                                },
-                                {
-                                    id: '2',
-                                    title: 'Согласовать с архитектором 2',
-                                    status: 'pending',
-                                    comment: 'Some text',
-                                    createdAt:'01.01.2017',
-                                    deadline: '03.02.2019'
-                                }
-                            ]
-                        },
+    var dd = date.getDate();
+    dd = (dd <10)? '0' + dd : dd;
 
-                        {
-                            id: '2',
-                            title: 'Освещение 2.2',
-                            createdAt:'01.01.2017',
-                            deadline:'01.02.2020',
-                            status: 'pending',
-                            subtasks:[
-                                {
-                                    id: '1',
-                                    title: 'Согласовать с архитектором',
-                                    status: 'pending',
-                                    comment: 'Some text',
-                                    createdAt:'01.01.2017',
-                                    deadline: '01.01.2019'
-                                },
-                                {
-                                    id: '2',
-                                    title: 'Согласовать с архитектором 2',
-                                    status: 'pending',
-                                    comment: 'Some text',
-                                    createdAt:'01.01.2017',
-                                    deadline: '03.02.2019'
-                                }
-                            ]
-                        },
-                    ]
-                },
-            ];
+    var mm = date.getMonth()+1;
+    mm = (mm <10)? '0' + mm : mm;
+
+    var yyyy = date.getFullYear();
+    return dd+'.'+mm+'.'+yyyy;
 }
