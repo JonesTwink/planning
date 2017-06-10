@@ -103,13 +103,15 @@ $(document).ready(function () {
 
     $('#add-task-modal .form-button.apply').on('click', function () {
         var appliedData = getTaskFormFields();
-        console.log(appliedData);
+        if (validateTaskFields(appliedData)){
+            alert('Сроки уже заведомо просрочены. Выберите другую дату.')
+            return;
+        }
         $.ajax({
             type: "POST",
             url: 'backend/methods/addTask.php',
             data: appliedData,
             success: function (data) {
-                console.log(appliedData);
                 if(data.status === 'success'){
                     closeForm('#add-task-bg');
                     var currentProjectId = $('.project-wrapper').find('#id').val();
@@ -138,6 +140,17 @@ function getTaskFormFields() {
         taskDeadline: $form.find('#task-deadline').val(),
         parentId: $form.find('#parent-project-id').val()
     }
+}
+function validateTaskFields(data) {
+    var currentDate = new Date();
+    console.log(data.taskDeadline)
+    var datePartsArray = data.taskDeadline.split('-');
+    var deadlineDate = new Date(datePartsArray[0], datePartsArray[1]-1, datePartsArray[2]);
+
+    if(deadlineDate < currentDate)
+        return true;
+    else
+        return false;
 }
 
 function closeForm(selector) {
