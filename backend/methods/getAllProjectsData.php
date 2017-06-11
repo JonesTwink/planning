@@ -42,7 +42,7 @@ function fillTasksWithSubtasks($tasks, $database){
 
 function setStatusOfSubtasksAnDefineTaskStatus($subtasks){
     $subtasksWithDefinedStatus = array();
-    $statusInfo = ['complete' => 0, 'pending'=> 0, 'overdue' => 0];
+    $statusInfo = ['complete' => 0, 'pending'=> 0, 'overdue' => 0, 'complete(overdue)' => 0];
     foreach ($subtasks as $subtask){
         $subtask = defineSubtaskStatus($subtask);
         $subtasksWithDefinedStatus[] = $subtask;

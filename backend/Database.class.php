@@ -126,6 +126,33 @@ class Database
         }
     }
 
+    function completeSubtask($subtaskId, $completeAt){
+            try{
+                $statement = $this->connection->prepare("UPDATE `subtask` SET `completeAt` = :completeAt WHERE `id` = :subtaskId");
+
+                $statement->bindParam(':subtaskId', $subtaskId);
+                $statement->bindParam(':completeAt', $completeAt);
+
+                return $this->formatStatementExecutionResult($statement->execute(), $this->connection->errorInfo()[2]);
+            }
+            catch(Exception $e){
+                return $this->formatStatementExecutionResult(false, $e->getMessage());
+            }
+    }
+
+    function revertSubtask($subtaskId){
+            try{
+                $statement = $this->connection->prepare("UPDATE `subtask` SET `completeAt` = null WHERE `id` = :subtaskId");
+
+                $statement->bindParam(':subtaskId', $subtaskId);
+
+                return $this->formatStatementExecutionResult($statement->execute(), $this->connection->errorInfo()[2]);
+            }
+            catch(Exception $e){
+                return $this->formatStatementExecutionResult(false, $e->getMessage());
+            }
+    }
+
     function formatStatementExecutionResult($result, $error = 'No error message provided.'){
         if ($result)
             return (object)['executionResult'=> true];

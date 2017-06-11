@@ -167,7 +167,6 @@ $(document).ready(function () {
     });
 
     $('body').on('click','.subtask-button.delete', function (event) {
-        event.stopPropagation();
         var $this = $(this);
         var deletionAccepted = confirm('Вы действительно хотите удалить подзадачу?');
         if (deletionAccepted){
@@ -186,6 +185,45 @@ $(document).ready(function () {
                 }
             });
         }
+    });
+    $('body').on('click','.subtask-button.check', function () {
+        var $this = $(this);
+        var appliedData = { subtaskId: $this.parents('.subtask-item').find('#id').val()};
+        $.ajax({
+            type: "POST",
+            url: 'backend/methods/completeSubtask.php',
+            data: appliedData,
+            success: function (data) {
+                console.log(appliedData);
+                if(data.status === 'success'){
+                    alert('Подзадача отмечена как выполненная.');
+                    var currentProjectId = $('.project-wrapper').find('#id').val();
+                    getProjectsDataAndUpdateLayout('subtask', currentProjectId);
+                } else{
+                    alert(data.data);
+                }
+            }
+        });
+    });
+
+    $('body').on('click','.subtask-button.uncheck', function () {
+        var $this = $(this);
+        var appliedData = { subtaskId: $this.parents('.subtask-item').find('#id').val()};
+        $.ajax({
+            type: "POST",
+            url: 'backend/methods/revertSubtask.php',
+            data: appliedData,
+            success: function (data) {
+                console.log(appliedData);
+                if(data.status === 'success'){
+                    alert('С подзадачи снят статус "Выполнена".');
+                    var currentProjectId = $('.project-wrapper').find('#id').val();
+                    getProjectsDataAndUpdateLayout('subtask', currentProjectId);
+                } else{
+                    alert(data.data);
+                }
+            }
+        });
     });
 
 });
@@ -302,11 +340,16 @@ function buildSubtaskList(subtasks, $subtaskList) {
             subtaskTpl.find('.subtask-title').html(subtask.title);
             subtaskTpl.find('.subtask-createdAt').children('.value').html(formatDate(subtask.createdAt));
             subtaskTpl.find('.subtask-deadline').children('.value').html(formatDate(subtask.deadline));
+            if (subtask.status == 'complete' || subtask.status == 'complete(overdue)'){
+                subtaskTpl.find('.fa-check').addClass('fa-repeat').removeClass('fa-check');
+                subtaskTpl.find('.subtask-button').addClass('uncheck').removeClass('check');
+            }
             $subtaskList.prepend(subtaskTpl);
         });
     });
     return $subtaskList;
 }
+
 function findEntityById(id, array) {
     var selectedEntity;
     $.each(array, function (index, entity) {
@@ -377,7 +420,7 @@ function resolveStatusString(status) {
             response = '<span style="color: green">Выполнено</span>';
             break;
         case 'complete(overdue)':
-            response = '<span style="color: indianred">Выполнено(просрочено)</span>';
+            response = '<span style="color: darkorange">Выполнено(просрочено)</span>';
             break;
     }
     return response;
