@@ -23,8 +23,6 @@ $(document).ready(function () {
             toggleElement('.project-grid','show','left');
             $('.add-project-button').show();
         }, 300);
-
-
     });
 
     $('body').on('click', '.subtask-list-button', function (event) {
@@ -37,7 +35,6 @@ $(document).ready(function () {
             $this.parents('.task-item').addClass('active');
             $this.children('.fa').removeClass('fa-chevron-right').addClass('fa-chevron-left');
         }
-
     });
 
     $('.new-task-button').on('click', function () {
@@ -104,7 +101,7 @@ $(document).ready(function () {
 
     $('#add-task-modal .form-button.apply').on('click', function () {
         var appliedData = getTaskFormFields();
-        if (validateTaskFields(appliedData)){
+        if (!validateTaskFields(appliedData)){
             alert('Сроки уже заведомо просрочены. Выберите другую дату.')
             return;
         }
@@ -145,6 +142,52 @@ $(document).ready(function () {
             });
         }
     });
+
+    $('#add-subtask-modal .form-button.apply').on('click', function () {
+        var appliedData = getSubtaskFormFields();
+        if (!validateSubtaskFields(appliedData)){
+            alert('Дата должна быть в промежутке между текущей датой и датой сроков выполнения задания. Выберите другую дату.')
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: 'backend/methods/addSubtask.php',
+            data: appliedData,
+            success: function (data) {
+                if(data.status === 'success'){
+                    closeForm('#add-subtask-bg');
+                    alert('Подзадача добавлена.');
+                    var currentProjectId = $('.project-wrapper').find('#id').val();
+                    getProjectsDataAndUpdateLayout('task', currentProjectId);
+                } else{
+                    alert(data.data);
+                }
+            }
+        });
+    });
+
+    $('body').on('click','.subtask-button.delete', function (event) {
+        event.stopPropagation();
+        var $this = $(this);
+        var deletionAccepted = confirm('Вы действительно хотите удалить подзадачу?');
+        if (deletionAccepted){
+            var appliedData = { subtaskId: $this.parents('.subtask-item').find('#id').val()};
+            $.ajax({
+                type: "POST",
+                url: 'backend/methods/deleteSubtask.php',
+                data: appliedData,
+                success: function (data) {
+                    console.log(appliedData);
+                    if(data.status === 'success'){
+                        $this.parents('.subtask-item').remove();
+                    } else{
+                        alert(data.data);
+                    }
+                }
+            });
+        }
+    });
+
 });
 
 function getProjectFormFields() {
@@ -163,14 +206,44 @@ function getTaskFormFields() {
         parentId: $form.find('#parent-project-id').val()
     }
 }
+function getSubtaskFormFields() {
+    $form = $('#add-subtask-modal');
+    return {
+        subtaskName:   $form.find('#subtask-name').val(),
+        subtaskDeadline: $form.find('#subtask-deadline').val(),
+        parentId: $form.find('#parent-task-id').val()
+    }
+}
 function validateTaskFields(data) {
     var currentDate = new Date();
     console.log(data.taskDeadline)
     var datePartsArray = data.taskDeadline.split('-');
     var deadlineDate = new Date(datePartsArray[0], datePartsArray[1]-1, datePartsArray[2]);
 
-    if(deadlineDate < currentDate)
+    if(deadlineDate > currentDate)
         return true;
+    else
+        return false;
+}
+function validateSubtaskFields(data) {
+    var currentDate = new Date();
+
+    var currentProject = findEntityById($('.project-wrapper').find('#id').val(), globalProjectData);
+    var parentTask = findEntityById(data.parentId, currentProject.tasks);
+
+    var datePartsArray = parentTask.deadline.split(/[ -]/);
+    var parentDeadlineDate = new Date(datePartsArray[0], datePartsArray[1]-1, datePartsArray[2]);
+
+    datePartsArray = data.subtaskDeadline.split('-');
+    var deadlineDate = new Date(datePartsArray[0], datePartsArray[1]-1, datePartsArray[2]);
+
+    if(deadlineDate > currentDate)
+        if (deadlineDate < parentDeadlineDate){
+            return true;
+        }
+        else{
+            return false;
+        }
     else
         return false;
 }
@@ -322,7 +395,7 @@ function getProjectsDataAndUpdateLayout(elementType, parentId) {
                     buildTaskList(findEntityById(parentId, data.data));
                     break;
                 case 'subtask':
-                    //to be implemented
+                    buildTaskList(findEntityById(parentId, data.data));
                     break;
             }
         }

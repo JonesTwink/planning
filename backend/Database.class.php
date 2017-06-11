@@ -72,10 +72,10 @@ class Database
 
     function addTask($taskName, $taskDeadline, $parentId){
         try{
-            $statement = $this->connection->prepare("INSERT INTO `task` (`title`, `deadline`, `parentId`) VALUES (:projectName, :projectDeadline, :parentId)");
+            $statement = $this->connection->prepare("INSERT INTO `task` (`title`, `deadline`, `parentId`) VALUES (:taskName, :taskDeadline, :parentId)");
 
-            $statement->bindParam(':projectName', $taskName);
-            $statement->bindParam(':projectDeadline', $taskDeadline);
+            $statement->bindParam(':taskName', $taskName);
+            $statement->bindParam(':taskDeadline', $taskDeadline);
             $statement->bindParam(':parentId', $parentId);
 
             return $this->formatStatementExecutionResult($statement->execute(), $this->connection->errorInfo()[2]);
@@ -90,6 +90,34 @@ class Database
             $statement = $this->connection->prepare("DELETE FROM `task` WHERE `id` = :taskId");
 
             $statement->bindParam(':taskId', $taskId);
+
+            return $this->formatStatementExecutionResult($statement->execute(), $this->connection->errorInfo()[2]);
+        }
+        catch(Exception $e){
+            return $this->formatStatementExecutionResult(false, $e->getMessage());
+        }
+    }
+
+    function addSubtask($subtaskName, $subtaskDeadline, $parentId){
+        try{
+            $statement = $this->connection->prepare("INSERT INTO `subtask` (`title`, `deadline`, `parentId`) VALUES (:subtaskName, :subtaskDeadline, :parentId)");
+
+            $statement->bindParam(':subtaskName', $subtaskName);
+            $statement->bindParam(':subtaskDeadline', $subtaskDeadline);
+            $statement->bindParam(':parentId', $parentId);
+
+            return $this->formatStatementExecutionResult($statement->execute(), $this->connection->errorInfo()[2]);
+        }
+        catch(Exception $e){
+            return $this->formatStatementExecutionResult(false, $e->getMessage());
+        }
+    }
+
+    function deleteSubtask($subtaskId){
+        try{
+            $statement = $this->connection->prepare("DELETE FROM `subtask` WHERE `id` = :subtaskId");
+
+            $statement->bindParam(':subtaskId', $subtaskId);
 
             return $this->formatStatementExecutionResult($statement->execute(), $this->connection->errorInfo()[2]);
         }

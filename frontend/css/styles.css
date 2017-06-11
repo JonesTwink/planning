@@ -297,7 +297,7 @@
 .subtask-buttons .subtask-button.check:hover{
     background: #8dd382;
 }
-.subtask-buttons .subtask-button.uncheck:hover{
+.subtask-buttons .subtask-button.delete:hover{
     background: indianred;
 }
 .subtask-buttons .subtask-button span{
