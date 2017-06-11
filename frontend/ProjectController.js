@@ -367,8 +367,10 @@ function toggleElement(selector, action, fromDirection) {
         $(selector).css('transition', '0.2s margin ease');
         $(selector).css('margin-'+fromDirection, '100vw');
         $(selector).fadeOut(300);
+        $('body').css('overflow', 'auto');
     }
     else if (action === 'show'){
+        $('body').css('overflow', 'hidden');
         $(selector).fadeIn(300);
         $(selector).css('margin-'+fromDirection, '0');
         $('body').css('overflow', 'auto');
